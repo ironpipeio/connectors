@@ -2,19 +2,15 @@
 # -*- coding: utf-8 -*-
 """
 Ironpipe PNG connector
-
-@author: eckart
 """
 import ironpipe
 import PIL
 import sys
 
 def main():
-    """
-    """
     try:
         # read file meta data and file
-        info = ironpipe.connector_read_info(sys.stdin)
+        info = ironpipe.connector_read_metadata(sys.stdin)
         image = PIL.open(sys.stdin)
     except:
         return ironpipe.connector_error('bad image file')
@@ -26,7 +22,7 @@ def main():
 
     try:
         # write meta data into stream]
-        ironpipe.connector_write_info(sys.stdout, info)
+        ironpipe.connector_write_metadata(sys.stdout, info)
         # push image back into stream
         image.save(sys.stdout, 'PNG')
     except:
