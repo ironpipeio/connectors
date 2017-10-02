@@ -31,5 +31,4 @@ def main():
     return 0
 
 if __name__ == '__main__':
-    # Remove program name from command line arguments
     sys.exit(main())
