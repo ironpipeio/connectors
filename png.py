@@ -3,17 +3,18 @@
 """
 Ironpipe PNG connector
 """
-import ironpipe
+import ironpipe as ip
 import PIL
 import sys
 
 def main():
     try:
         # read file meta data and file
-        info = ironpipe.connector_read_metadata(sys.stdin)
-        image = PIL.open(sys.stdin)
+        image = PIL.open(ip.connector.input_file)
+        info = ip.connector.input_file.metadata
+
     except:
-        return ironpipe.connector_error('bad image file')
+        return ip.connector.error('bad image file')
 
     # update file metadata
     info['content-type'] = 'image/png'
@@ -21,12 +22,12 @@ def main():
     info['height'] = image.height
 
     try:
-        # write meta data into stream]
-        ironpipe.connector_write_metadata(sys.stdout, info)
+        # write meta data into stream
+        io.connector.output_file.metadata = info
         # push image back into stream
-        image.save(sys.stdout, 'PNG')
+        image.save(ip.connector.output_file, 'PNG')
     except:
-        return ironpipe.connector_error('write error')
+        return ip.connector.error('write error')
 
     return 0
 
