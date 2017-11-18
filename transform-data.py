@@ -154,7 +154,7 @@ def write_tsv(data, file, delimiter=','):
     '''
     '''
     write_csv(data, file, delimiter='\t')
-    ironpipe.set_metadata('content-type', 'text/tsv')
+    ironpipe.set_metadata('content-type', 'text/tab-separated-values')
 
 
 #
