@@ -36,9 +36,11 @@ exit([error_message])
 """
 
 import sys
-from os import environ 
+import os
 import json
 import argparse
+import yaml
+
 
 # Define system contants
 RESOURCE_ARG_STRING = '--resource'
@@ -56,20 +58,40 @@ def parse_args():
     parser.add_argument(CONFIG_ARG_STRING, default=None)
     args = parser.parse_args()
     
-    resource = args.resource
-    config = args.config
+    resource_arg = args.resource
+    config_arg = args.config
     
+    resource = None
+    config = None
+        
     # Try to parse passed JSON strings
-    if resource:
+    if resource_arg:        
         try:
-            resource = json.loads(resource)
+            resource = json.loads(resource_arg)
         except:
-            resource = None
-    if config:
+            # Check if the argument might have been a file path
+            if not resource and os.path.isfile(resource_arg):
+                with open(resource_arg, 'r') as f:
+                    try:
+                        resource = yaml.load(f)
+                    except yaml.YAMLError as err:
+                        exit("Unable to parse resource declaration file '{}': {}".format(resource_arg, err))
+            else:
+                exit('--resource argument must be JSON string or file')
+                
+    if config_arg:
         try:
-            config = json.loads(config)
+            config = json.loads(config_arg)
         except:
-            config = None            
+            # Check if the argument might have been a file path
+            if not config and os.path.isfile(config_arg):
+                with open(config_arg, 'r') as f:
+                    try:
+                        config = yaml.load(f)
+                    except yaml.YAMLError as err:
+                        exit("Unable to parse config declaration file '{}': {}".format(config_arg, err))
+            else:
+                exit('--config argument must be JSON string or file')
         
     # If both resource and config are defined, config overrides resource
     if resource and config:
@@ -117,7 +139,7 @@ def read_metadata_from_variable(variable):
     '''
     Helper function that parses JSON string from environ variable 'variable'
     '''
-    metadata = environ.get(variable)
+    metadata = os.environ.get(variable)
 
     if metadata:
         try:
@@ -162,7 +184,7 @@ def set_metadata(name, value):
     
     # Write update metadata values back into environ variable as JSON string
     metadata_json = json.dumps(metadata)
-    environ[IRONPIPE_OUTPUT_METADATA] = metadata_json
+    os.environ[IRONPIPE_OUTPUT_METADATA] = metadata_json
 
     return metadata
     

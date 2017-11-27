@@ -62,15 +62,17 @@ def check_file(input, output, schema):
 #
 def check_schema():
     '''
-    '''
     with open("/Users/eckart/src/ironpipe/connectors/test/billing.json") as f:
         check_file(f, sys.stdout,foo)
     '''
+
     schema = ironpipe.get_config('schema')
     
     # argument is required
     if not schema:
         ironpipe.exit('Missing schema configuration.')
+        
+    print('passed schema value is', schema)
         
     # Confirm that schema pram is JSON and valid JSON Schema
     try:
@@ -80,7 +82,7 @@ def check_schema():
         ironpipe.exit('Schema not valid JSON: {}'.format(err))
                     
     check_file(sys.stdin, sys.stdout, schema)
-    '''
+
     return 0
 
 #

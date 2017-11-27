@@ -111,7 +111,10 @@ def read_csv(file, delimiter=','):
     try:
         has_header = csv.Sniffer().has_header(file.read(1024))
         file.seek(0)
+    except Exception as err:
+        ironpipe.exit('Data read error: {}'.format(err))
 
+    try:
         # read first line
         reader = csv.reader(file, delimiter=delimiter)
         first_row = next(reader)
@@ -137,8 +140,8 @@ def read_csv(file, delimiter=','):
                 data.append(data_row)
 
     except Exception as err:
-        ironpipe.exit('Data read error line {}: {}'.format( reader.line_num, err))
-
+        ironpipe.exit('Data read error line {}: {}'.format(reader.line_num, err))
+            
     return data
 
 #
@@ -251,7 +254,7 @@ def transform_data():
 
     # Confirm that both input and output are set
     if not input or not output:
-        ironpipe.exit('Mssing input or output configuration.')
+        ironpipe.exit('Missing input or output configuration.')
     else:
         input = input.lower()
         output = output.lower()

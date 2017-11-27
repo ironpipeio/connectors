@@ -1,0 +1,6 @@
+resource: transformer
+name: convert-to-json
+action: data
+config:
+  input: csv
+  output: json
