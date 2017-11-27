@@ -75,6 +75,33 @@ def write_json(data, file):
 
 #
 #
+def isInt(v):
+    try:     i = int(v)
+    except:  return False
+    return True
+
+#
+#
+def isFloat(v):
+    try:     i = float(v)
+    except:  return False
+    return True
+
+#
+# convert int and float to native python formats
+def convert_data(row):
+    '''
+    '''
+    for i, v in enumerate(row):
+        if isInt(v):
+            row[i] = int(v)
+        elif isFloat(v):
+            row[i] = float(v)
+    
+    return row
+    
+#
+#
 def read_csv(file, delimiter=','):
     '''
     '''
@@ -105,7 +132,8 @@ def read_csv(file, delimiter=','):
                 reader = csv.reader(file, delimiter=delimiter)
 
             for row in reader:
-                data_row = OrderedDict(zip(field_names, row))
+                converted_row = convert_data(row)
+                data_row = OrderedDict(zip(field_names, converted_row))
                 data.append(data_row)
 
     except Exception as err:

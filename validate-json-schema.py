@@ -46,7 +46,6 @@ def check_file(input, output, schema):
     
     try:
         for row in data:
-            print('validating row', row)
             validate(row, schema)  
 
     except Exception as err:
@@ -91,8 +90,7 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# , "pattern": "\b(?:3[47]\d{2}([\ \-]?)\d{6}\1\d|(?:(?:4\d|5[1-5]|65)\d{2}|6011)([\ \-]?)\d{4}\2\d{4}\2)\d{4}\b"
+    
 test_schema = '''
 {
   "type": "object",
@@ -102,7 +100,7 @@ test_schema = '''
     "currency": {"type": "string", "enum": ["USD", "CAD", "MXN"]},
     "client id": { "type": "integer", "minimum": 0 },
     "client name": {"type": "string"},
-    "card number": {"type": "string"}
+    "card number": {"type": "string", "pattern": "\\\\b(?:\\\\d[ -]*?){13,16}\\\\b"}
   },
   "required": ["date", "amount", "currency", "client id", "client name", "card number"],
   "additionalProperties": false
