@@ -46,6 +46,7 @@ def check_file(input, output, schema):
     
     try:
         for row in data:
+            print('validating row', row)
             validate(row, schema)  
 
     except Exception as err:
@@ -63,6 +64,9 @@ def check_file(input, output, schema):
 def check_schema():
     '''
     '''
+    with open("/Users/eckart/src/ironpipe/connectors/test/billing.json") as f:
+        check_file(f, sys.stdout,foo)
+    '''
     schema = ironpipe.get_config('schema')
     
     # argument is required
@@ -77,7 +81,7 @@ def check_schema():
         ironpipe.exit('Schema not valid JSON: {}'.format(err))
                     
     check_file(sys.stdin, sys.stdout, schema)
-    
+    '''
     return 0
 
 #
@@ -87,4 +91,21 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+# , "pattern": "\b(?:3[47]\d{2}([\ \-]?)\d{6}\1\d|(?:(?:4\d|5[1-5]|65)\d{2}|6011)([\ \-]?)\d{4}\2\d{4}\2)\d{4}\b"
+test_schema = '''
+{
+  "type": "object",
+  "properties": {
+    "date": { "type": "string", "format": "date-time" },
+    "amount": { "type": "number", "minimum": 0 },
+    "currency": {"type": "string", "enum": ["USD", "CAD", "MXN"]},
+    "client id": { "type": "integer", "minimum": 0 },
+    "client name": {"type": "string"},
+    "card number": {"type": "string"}
+  },
+  "required": ["date", "amount", "currency", "client id", "client name", "card number"],
+  "additionalProperties": false
+}
+'''
 

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<data>
+<row>
+<NAME>John Smith</NAME>
+<ADDRESS>123 Main Street</ADDRESS>
+<ZIP>94301</ZIP>
+<CITY>Palo Alto</CITY>
+</row>
+<row>
+<NAME>Mike Doe</NAME>
+<ADDRESS>321 Main Street</ADDRESS>
+<ZIP>20345</ZIP>
+<CITY>New York</CITY>
+</row>
+<row>
+<NAME>Minnie Driver</NAME>
+<ADDRESS>111 Main Street</ADDRESS>
+<ZIP>90001</ZIP>
+<CITY>Los Angeles</CITY>
+</row>
+</data>
