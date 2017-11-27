@@ -49,7 +49,7 @@ def check_file(input, output, schema):
             validate(row, schema)  
 
     except Exception as err:
-        ironpipe.exit('Invalid JSON schema: {}'.format(err))
+        ironpipe.exit('Data failed JSON Schema validation: {}'.format(err))
 
     # Write the origninal, validated string to the output
     try:
@@ -71,9 +71,11 @@ def check_schema():
     # argument is required
     if not schema:
         ironpipe.exit('Missing schema configuration.')
-        
-    print('passed schema value is', schema)
-        
+    
+    # Fix escape characters so that JSON parser preserves '\' characters 
+    # for regex strings
+    schema = schema.replace("\\", "\\\\")            
+
     # Confirm that schema pram is JSON and valid JSON Schema
     try:
         schema = json.loads(schema)
@@ -93,19 +95,4 @@ def main():
 if __name__ == '__main__':
     main()
     
-test_schema = '''
-{
-  "type": "object",
-  "properties": {
-    "date": { "type": "string", "format": "date-time" },
-    "amount": { "type": "number", "minimum": 0 },
-    "currency": {"type": "string", "enum": ["USD", "CAD", "MXN"]},
-    "client id": { "type": "integer", "minimum": 0 },
-    "client name": {"type": "string"},
-    "card number": {"type": "string", "pattern": "\\\\b(?:\\\\d[ -]*?){13,16}\\\\b"}
-  },
-  "required": ["date", "amount", "currency", "client id", "client name", "card number"],
-  "additionalProperties": false
-}
-'''
 

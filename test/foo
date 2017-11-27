@@ -1,6 +1,18 @@
 resource: transformer
-name: convert-to-json
-action: data
+name: verify-json-schema
+action: "https://ironpipe.io/lib/transformers/validate-json-schema.py"
 config:
-  input: csv
-  output: json
+  schema: |
+    {
+      "type": "object",
+      "properties": {
+        "date": { "type": "string", "format": "date-time" },
+        "amount": { "type": "number", "minimum": 0 },
+        "currency": {"type": "string", "enum": ["USD", "CAD", "MXN"]},
+        "client id": { "type": "integer", "minimum": 0 },
+        "client name": {"type": "string"},
+        "card number": {"type": "string", "pattern": "\b(?:\d[ -]*?){13,16}\b"}
+      },
+      "required": ["date", "amount", "currency", "client id", "client name", "card number"],
+      "additionalProperties": false
+    }
