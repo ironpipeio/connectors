@@ -1,0 +1,12 @@
+
+resource: transformer
+name: decrypt-csv-file
+action: https://ironpipe.io/lib/transformers/transform-gpg.py
+config:
+  mode: encrypt
+  secret:
+    resource: secret
+    name: demo1-token
+    action: token
+    config:
+      token: '3832efdsfsf8r33e2343f'

@@ -1,0 +1,41 @@
+resource: transformer
+name: decrypt-csv-file
+action: https://ironpipe.io/lib/transformers/transform-gpg.py
+config:
+  mode: encrypt
+  secret:
+    resource: secret
+    name: demo1-token
+    action: pki
+    config:
+      public_key: |
+        -----BEGIN PGP PUBLIC KEY BLOCK-----
+
+        mQENBFocVBoBCAC7wNHOWcU4Uc/0XLnCPmAEFcn4fMNw2PxI1B+VOKWbr7kTxFpB
+        IMxbvaNtW9hDfuwXrWlUVQhIpAzfAIPjIshDQgIE/Mee7je0bu/vDPNW9VtsaFTw
+        53WDNlN/HWfDRtL+qqQVHbucPFgn3OVBjtNFLns4HQKelW1wlTR6vSZRNRkGcVix
+        /fMnSSlMPfhmgY2jctbjeotykSvl+9J6xBMQk3m+/DUkQjj44gTAeMG5Rmp4iD37
+        RXm8OW8kzTF+wI6dDBvKjY6NvvVfJUiU80hPUHfSIlm4AU9yGOfnHiEcA5OdrAFS
+        n9yjelmYpH9532RP1sDFRt0FNvK+0zMcxvL7ABEBAAG0DkVja2FydCBXYWx0aGVy
+        iQFUBBMBCAA+FiEEOnxJiPKKrlyQdIZL8yk6TM0Pz7kFAlocVBoCGwMFCQPCZwAF
+        CwkIBwIGFQgJCgsCBBYCAwECHgECF4AACgkQ8yk6TM0Pz7kIHwf9HzS7xTfgZyXh
+        qWxlhBymR4xFIXRlgpA2jUAE8OLWIaqOTDC7cn2UkY7QueR7Prbm8ZcIfotb3KNA
+        X+nnB5C5AOauQ/5XHQAe8WgRQXk71WkejqyP5BQUf8brnzsCv763IYUyK/k8WkAk
+        CPEMBn30+JNGvV2EOX6rTDMvqgcCvL8J/7MvWdXIIWDGECpr8+Pwq6+Ay9AHYLWn
+        xOxrB3qdTEfL/WeH4foifxb8DShM3vnj8W6FXjDY+Phx5NTeoHsLRXSI4NCNHtDB
+        1AxgACSDrQ2Laa2fPJjldTMgNqrbuQwF09urDcsfMOI7zqyBuWo7Kl6iMzCPJTdN
+        rldX1vD1m7kBDQRaHFQaAQgAumyjIuVOMDxyItLnzr7INuiQYaTQJgl8ohY8YfO8
+        CtVx5D06vJMInf7lKaFJtfdVd9D+UVlot0HAFYg90Whejynq5gbbeouh0VtGehhb
+        1PAm0o96sIgLBLBGgy1zp8HUYWZjgUKzjojlZMy5RMZN0bwVHiXxTaFyR6J6qyJr
+        8Q/XyoIjRLHBOO8aZLAtsiA4UpBL3XiCvIW1R/PFzmYiB7OsVJ9gNUC9Ko5YhI96
+        u1dWpbGh1cjvG4sUlshx6jZpuPKv6mjPSjFG7tdiCR3XgI9ZUv3QGkosWqFouRoi
+        Pe5QdaywYnipZi/DszV7zYGeP53qgHQDxtXKgadt9WFawwARAQABiQE8BBgBCAAm
+        FiEEOnxJiPKKrlyQdIZL8yk6TM0Pz7kFAlocVBoCGwwFCQPCZwAACgkQ8yk6TM0P
+        z7naiQf8C5xbJegffhr5qBUpqtg7HMpNhVKC/kimmSS5Tee7VUt/HbvdN1tpPo5o
+        CcimXJP3w2HKszUxoIYljAEQCG/vENNf2Srqg9zwEU0jQrx6JM0mI5t7MkI2dc2Y
+        1ywbiWwtWO18rdpKC1UmgCp9L52JqsArdQbVFginpeDjLCYu3qcFrU9G0V35uMvj
+        ZXLvLe0isho8A2A0CxIbrO/5VJFOwvcAgCzfr1NWSE2cs8czszK4RzFg3YZYfGBu
+        TGuzBfRjUsVL6kdSyw8LbdL/NK3Z8Irea7wjZtxxZ/7v2hO4Z1vEopRNtr52aJm+
+        m7QMC4tt1JCy3FpenZI2N6h5wmwxDA==
+        =j4ae
+        -----END PGP PUBLIC KEY BLOCK-----

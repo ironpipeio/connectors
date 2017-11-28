@@ -1,0 +1,68 @@
+resource: transformer
+name: decrypt-csv-file
+action: https://ironpipe.io/lib/transformers/transform-gpg.py
+config:
+  mode: decrypt
+  secret:
+    resource: secret
+    name: demo1-token
+    action: pki
+    config:
+      private_key: |
+        -----BEGIN PGP PRIVATE KEY BLOCK-----
+
+        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
+        tr52aJm+m7QMC4tt1JCy3FpenZI2N6h5wmwxDA==
+        =Pat3
+        -----END PGP PRIVATE KEY BLOCK-----
