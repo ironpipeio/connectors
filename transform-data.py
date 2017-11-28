@@ -262,7 +262,7 @@ def transform_data():
     # Confirm that both input and output are known data formats
     if input not in DATA_MAP_FUNCTIONS or output not in DATA_MAP_FUNCTIONS:
         types = ', '.join([i for i in DATA_MAP_FUNCTIONS])
-        ironpipe.exit("Data format must be one of {}.".format(types))
+        ironpipe.exit('Data format must be one of: {}.'.format(types))
 
     # Parse the input file
     data = DATA_MAP_FUNCTIONS[input]['read'](sys.stdin)

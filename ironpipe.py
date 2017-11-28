@@ -27,12 +27,20 @@ set_metadata(name, value)
     Update the metadata for any data written to the output stream. This 
     function is a shortcut for writing a JSON string into 
     `$IRONPIPE_OUTPUT_METADATA`.
+    
+log(level, message)
+    Log message to 'stderr' with severity 'level`. Level needs to be one of
+    `error`, `warning`, `info`, `success-audit`, `failure-audit`, `debug`. 
+    The levels `success-audit` and `failure-audit` log audited security events. 
+    For example, a user's successful attempt to log on to the system is logged 
+    as a `success-audit` event, while a failed attempt to log into a database is
+    logged as a `failure-audit` event.
 
-exit([error_message])
+exit([message])
     Terminate execution either successfully (return 0 or no argument) or 
-    with error error_message. This function is a shortcut for writing 
-    error_message to stderr and then calling the exit() function with either 
-    a SUCCESS or FAILURE status.
+    log error with 'message' and exit with none-zero status.This function 
+    is a shortcut for writing 'message' to stderr and then calling the 
+    exit() function with either a SUCCESS or FAILURE status.
 """
 
 import sys
@@ -44,9 +52,15 @@ import yaml
 
 # Define system contants
 RESOURCE_ARG_STRING = '--resource'
+RESOURCE_ARG_SHORT_STRING = '-r'
 CONFIG_ARG_STRING = '--config'
+CONFIG_ARG_SHORT_STRING = '-c'
+DEBUG_ARG_STRING = '--debug'
+DEBUG_ARG_SHORT_STRING = '-d'
 IRONPIPE_INPUT_METADATA = 'IRONPIPE_INPUT_METADATA'
 IRONPIPE_OUTPUT_METADATA = 'IRONPIPE_OUTPUT_METADATA'
+
+DEBUG_MODE = False
 
 #
 # 
@@ -54,12 +68,17 @@ def parse_args():
     '''
     '''
     parser = argparse.ArgumentParser(description='Run Ironpipe Extension.')
-    parser.add_argument(RESOURCE_ARG_STRING, default=None)
-    parser.add_argument(CONFIG_ARG_STRING, default=None)
+    parser.add_argument(RESOURCE_ARG_STRING, RESOURCE_ARG_SHORT_STRING, 
+                        default=None, help='resource declaration YSON or YAML file')
+    parser.add_argument(CONFIG_ARG_STRING, CONFIG_ARG_SHORT_STRING, 
+                        default=None, help='config declaration YSON or YAML file')
+    parser.add_argument(DEBUG_ARG_STRING, DEBUG_ARG_SHORT_STRING, action='store_true',
+                        help='turn on debug logging')
     args = parser.parse_args()
     
     resource_arg = args.resource
     config_arg = args.config
+    debug_arg = args.debug
     
     resource = None
     config = None
@@ -99,6 +118,10 @@ def parse_args():
     # else if only resource is defined, extract 'config' arguments
     elif resource:
         config = resource.get('config')
+    
+    # Log debug messages    
+    if debug_arg:
+        DEBUG_MODE = True
                 
     return resource, config
 
@@ -187,20 +210,53 @@ def set_metadata(name, value):
     os.environ[IRONPIPE_OUTPUT_METADATA] = metadata_json
 
     return metadata
+
+# 
+# Define log levels
+#
+ERROR = 'error'
+WARNING = 'warning'
+INFO = 'info'
+DEBUG = 'debug'
+SUCCESS_AUDIT = 'success-audit'
+FAILURE_AUDIT = 'failure-audit'
+LOG_LEVELS = [ERROR, WARNING, INFO, DEBUG, SUCCESS_AUDIT, FAILURE_AUDIT]
+
+#
+#
+def log(level, message):
+    '''
+    Log message to 'stderr' with severity 'level`. Level needs to be one of
+    `error`, `warning`, `info`, `success-audit`, `failure-audit`, `debug`. 
+    The levels `success-audit` and `failure-audit` log audited security events. 
+    For example, a user's successful attempt to log on to the system is logged 
+    as a `success-audit` event, while a failed attempt to log into a database is
+    logged as a `failure-audit` event.
+    '''
     
+    # Skip logging debug messages unless DEBUG_MODE is set
+    if level == DEBUG and not DEBUG_MODE:
+        return
+    
+    # Make sure level is valid
+    if not level or not isinstance(level, str) or level.lower() not in LOG_LEVELS:
+        levels = ', '.join([i for i in LOG_LEVELS])
+        log(ERROR, 'log level must be one of: {}'.format(levels))
+        return
+        
+    sys.stderr.write('{}: {}'.format(level, message))
     
 #
 #
-def exit(error_message):
+def exit(message):
     '''
     Terminate execution either successfully (return 0 or no argument) or with
     `error error_message`. This function is a shortcut for writing
     `error_message` to `stderr` and then calling the `exit()` function with
     either a `SUCCESS` or `FAILURE` status.
     '''
-    if error_message:
-        sys.stderr.write(error_message)
-        sys.stderr.flush()
+    if message:
+        log(ERROR, message)
         sys.exit(1)
     else:
         sys.exit(0)

@@ -31,7 +31,7 @@ def transform_image():
     output = output.upper()
 
     if input not in IMAGE_FILE_TYPES or output not in IMAGE_FILE_TYPES:
-        ironpipe.exit("Image format must be one of {}.".format(IMAGE_FILE_TYPES))                
+        ironpipe.exit("Image format must be one of: {}.".format(IMAGE_FILE_TYPES))                
         
     compression = ironpipe.get_config('compression')
     if compression is None:
@@ -62,7 +62,7 @@ def transform_image():
     return 0
 
 #
-#        
+#
 def main():   
     return transform_image()
 
