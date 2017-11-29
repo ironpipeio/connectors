@@ -15,14 +15,14 @@ import sys
 #
 
 #
-# 
+#
 def encrypt_file(input, output, secret):
     '''
     '''
     gpg = gnupg.GPG(verbose=None)
 
     secret_type = secret['action']
-        
+
     if secret_type == 'token':
         try:
             # symmetrically encrupt file using phassphrase from secret
@@ -44,7 +44,7 @@ def encrypt_file(input, output, secret):
             import_result = gpg.import_keys(secret['config']['public_key'])
             id = import_result.fingerprints
 
-            # import_keys returns an empty list if it was not able to parse the key            
+            # import_keys returns an empty list if it was not able to parse the key
             if not id:
                 raise ValueError('Bad public_key value')
             else:
@@ -68,7 +68,7 @@ def encrypt_file(input, output, secret):
         output.write(str(encrypted_data))
         ironpipe.set_metadata('content-type', 'application/pgp-encrypted')
     except Exception as err:
-        ironpipe.exit('Data write error: {}'.format(err))    
+        ironpipe.exit('Data write error: {}'.format(err))
 
 #
 #
@@ -95,13 +95,13 @@ def decrypt_file(input, output, secret):
             import_result = gpg.import_keys(secret['config']['private_key'])
             id = import_result.fingerprints
 
-            # import_keys returns an empty list if it was not able to parse the key            
+            # import_keys returns an empty list if it was not able to parse the key
             if not id:
                 raise ValueError('Bad private_key value')
- 
+
         except Exception as err:
             ironpipe.exit('Key import error {}'.format(err))
-            
+
         # Decrypt the input data using the imported key
         try:
             encrypted_data = input.read()
@@ -110,14 +110,14 @@ def decrypt_file(input, output, secret):
                 raise Exception(decrypted_data.status)
         except Exception as err:
             ironpipe.exit('Data decryption error: {}'.format(err))
-    
+
     # Write file as binary data to support encrypted images or binary file types
     try:
-        output.buffer.write(decrypted_data.data)     
+        output.buffer.write(decrypted_data.data)
     except Exception as err:
-        ironpipe.exit('Data write error: {}'.format(err))  
+        ironpipe.exit('Data write error: {}'.format(err))
 
-    
+
 #
 # map action appropriate function
 #
@@ -130,7 +130,7 @@ MODE_MAP_FUNCTIONS = {
 # Validate the secret matches decryption / encryption mode
 #
 def validate_secret(secret, mode):
-    
+
     # Confirm that secret is set and a dictionary
     if not secret or not isinstance(secret, dict):
         ironpipe.exit('Missing secret.')
@@ -141,7 +141,7 @@ def validate_secret(secret, mode):
         ironpipe.exit('Secret missing config {}'.format(secret))
 
     # Confirm that secret is a dictionary and either token or PKI type
-    secret_type = secret.get('action', '').lower()    
+    secret_type = secret.get('action', '').lower()
     if secret_type not in ['pki', 'token']:
         ironpipe.exit("Secret must be either 'token' or 'pki'.")
 
@@ -167,7 +167,7 @@ def cipher():
     '''
     mode = ironpipe.get_config('mode')
     secret = ironpipe.get_config('secret')
-        
+
     # Confirm that mode is set and a string
     if not mode or not isinstance(mode, str):
         ironpipe.exit('Need to specify mode.')
@@ -180,16 +180,16 @@ def cipher():
     # Confirm that mode is known
     if mode not in MODE_MAP_FUNCTIONS:
         mode = ', '.join([i for i in MODE_MAP_FUNCTIONS])
-        ironpipe.exit("Mode must be one of: {}.".format(mode))                      
-                
-    # Encrypt / unencrypt / validate input file        
+        ironpipe.exit("Mode must be one of: {}.".format(mode))
+
+    # Encrypt / unencrypt / validate input file
     MODE_MAP_FUNCTIONS[mode](sys.stdin, sys.stdout, secret)
 
     return 0
 
 #
-#        
-def main():   
+#
+def main():
     return cipher()
 
 if __name__ == '__main__':
@@ -201,7 +201,7 @@ if __name__ == '__main__':
     if secret['action'] is 'token':
         foo = gpg.encrypt('hello world', recipients=None, passphrase='hello', symmetric=True)
 
-    
+
     try:
         with gzip.open(input.buffer) as file:
             data = file.read()
@@ -210,7 +210,7 @@ if __name__ == '__main__':
 
     # Write file as binary data to support encrypted images or binary file types
     try:
-        output.buffer.write(data)     
+        output.buffer.write(data)
     except Exception as err:
         ironpipe.exit('Data write error: {}'.format(err))
 
@@ -219,21 +219,21 @@ if __name__ == '__main__':
     cipher_algo = ironpipe.get_config('cipher-algo')
     import_result = gpg.import_keys(private_key + public_key)
     import_result.fingerprints
-    
+
     out = gpg.encrypt('hello', '3A7C4988F28AAE5C9074864BF3293A4CCD0FCFB9')
     str(out)
 
-        
+
     gpg = gnupg.GPG(verbose=None)
     foo = gpg.encrypt('hello world', recipients=None, passphrase='hello', symmetric=True)
     bar = gpg.decrypt(foo.data, passphrase='hello')
-    
+
     baz = gpg.decrypt(foo.data)
-    
+
     ssh-keygen - create public and private key
 '''
 
-    
+
 private_key = '''
 -----BEGIN PGP PRIVATE KEY BLOCK-----
 
@@ -293,7 +293,7 @@ tr52aJm+m7QMC4tt1JCy3FpenZI2N6h5wmwxDA==
 =Pat3
 -----END PGP PRIVATE KEY BLOCK-----
 '''
-   
+
 public_key = '''
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 
@@ -340,5 +340,3 @@ sMV4VJCp8DKdYacVeLbSzD9RHZgLkc251YoOVjQPF7BIJQvHfQ+Yc9NcIVE=
 =ePP1
 -----END PGP MESSAGE-----
 '''
- 
-
