@@ -79,7 +79,7 @@ def parse_args():
     resource_arg = args.resource
     config_arg = args.config
     debug_arg = args.debug
-    
+        
     resource = None
     config = None
         
@@ -121,6 +121,7 @@ def parse_args():
     
     # Log debug messages    
     if debug_arg:
+        global DEBUG_MODE
         DEBUG_MODE = True
                 
     return resource, config
@@ -233,7 +234,7 @@ def log(level, message):
     as a `success-audit` event, while a failed attempt to log into a database is
     logged as a `failure-audit` event.
     '''
-    
+    global DEBUG_MODE
     # Skip logging debug messages unless DEBUG_MODE is set
     if level == DEBUG and not DEBUG_MODE:
         return
@@ -244,7 +245,7 @@ def log(level, message):
         log(ERROR, 'log level must be one of: {}'.format(levels))
         return
         
-    sys.stderr.write('{}: {}'.format(level, message))
+    sys.stderr.write('[{}] {}'.format(level, message))
     
 #
 #

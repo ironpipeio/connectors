@@ -101,7 +101,7 @@ def decrypt_file(input, output, secret):
  
         except Exception as err:
             ironpipe.exit('Key import error {}'.format(err))
-
+            
         # Decrypt the input data using the imported key
         try:
             encrypted_data = input.read()
@@ -180,7 +180,7 @@ def cipher():
     # Confirm that mode is known
     if mode not in MODE_MAP_FUNCTIONS:
         mode = ', '.join([i for i in MODE_MAP_FUNCTIONS])
-        ironpipe.exit("Mode must be one of {}.".format(mode))                      
+        ironpipe.exit("Mode must be one of: {}.".format(mode))                      
                 
     # Encrypt / unencrypt / validate input file        
     MODE_MAP_FUNCTIONS[mode](sys.stdin, sys.stdout, secret)
