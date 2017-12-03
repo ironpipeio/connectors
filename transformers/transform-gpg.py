@@ -6,9 +6,11 @@ Created on Sun Nov 26 23:31:52 2017
 @author: eckart
 """
 
-import ironpipe
 import gnupg
 import sys
+
+sys.path.append('../lib')
+import ironpipe
 
 #
 # Encrypt/decrypt files using gpg

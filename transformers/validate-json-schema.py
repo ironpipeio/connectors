@@ -6,10 +6,12 @@ Created on Tue Nov 14 18:58:42 2017
 @author: eckart
 """
 
-import ironpipe
 import sys
 import json
 from jsonschema import validate
+
+sys.path.append('../lib')
+import ironpipe
 
 # JSON_Schema_Validator = Draft4Validator
 
@@ -25,11 +27,11 @@ def check_file(input, output, schema):
         input_string = input.read()
     except Exception as err:
         ironpipe.exit('Data read error: {}'.format(err))
-        
+
     # Try parsing the string
     try:
         data = json.loads(input_string)
-        
+
         if not isinstance(data, list): # Need to always return a list
             data = [data]
 
@@ -39,14 +41,14 @@ def check_file(input, output, schema):
             data = []
 
             for line in input_string.splitlines():
-                data.append(json.loads(line))                
+                data.append(json.loads(line))
 
         except Exception as err:
             ironpipe.exit('Data read error: {}'.format(err))
-    
+
     try:
         for row in data:
-            validate(row, schema)  
+            validate(row, schema)
 
     except Exception as err:
         ironpipe.exit('Data failed JSON Schema validation: {}'.format(err))
@@ -67,14 +69,14 @@ def check_schema():
     '''
 
     schema = ironpipe.get_config('schema')
-    
+
     # argument is required
     if not schema:
         ironpipe.exit('Missing schema configuration.')
-    
-    # Fix escape characters so that JSON parser preserves '\' characters 
+
+    # Fix escape characters so that JSON parser preserves '\' characters
     # for regex strings
-    schema = schema.replace("\\", "\\\\")            
+    schema = schema.replace("\\", "\\\\")
 
     # Confirm that schema pram is JSON and valid JSON Schema
     try:
@@ -82,17 +84,15 @@ def check_schema():
 
     except Exception as err:
         ironpipe.exit('Schema not valid JSON: {}'.format(err))
-                    
+
     check_file(sys.stdin, sys.stdout, schema)
 
     return 0
 
 #
-#        
-def main():   
+#
+def main():
     return check_schema()
 
 if __name__ == '__main__':
     main()
-    
-

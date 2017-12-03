@@ -6,9 +6,11 @@ Created on Mon Nov  6 15:22:32 2017
 @author: eckart
 """
 
-import ironpipe
 from PIL import Image
 import sys
+
+sys.path.append('../lib')
+import ironpipe
 
 IMAGE_FILE_TYPES = {'JPEG', 'PNG', 'GIF'}
 

@@ -24,13 +24,15 @@ Note that if input and output specify the same data type, the tranformer will
 validate the input, but will then directly copy the input file to the output
 """
 
-import ironpipe
 import sys
 from collections import OrderedDict
 
 import csv
 import json
 import xml.etree.ElementTree as ET
+
+sys.path.append('../lib')
+import ironpipe
 
 # Data is stored as and OrderedDict to preserve the column sequence
 
@@ -97,9 +99,9 @@ def convert_data(row):
             row[i] = int(v)
         elif isFloat(v):
             row[i] = float(v)
-    
+
     return row
-    
+
 #
 #
 def read_csv(file, delimiter=','):
@@ -141,7 +143,7 @@ def read_csv(file, delimiter=','):
 
     except Exception as err:
         ironpipe.exit('Data read error line {}: {}'.format(reader.line_num, err))
-            
+
     return data
 
 #
