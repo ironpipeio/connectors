@@ -249,7 +249,7 @@ def log(level, message):
     
 #
 #
-def exit(message):
+def exit(message=None):
     '''
     Terminate execution either successfully (return 0 or no argument) or with
     `error error_message`. This function is a shortcut for writing
