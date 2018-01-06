@@ -8,8 +8,6 @@ Created on Tue Nov 14 11:32:41 2017
 
 import sys
 import gzip
-
-sys.path.append('../lib')
 import ironpipe.extension
 
 

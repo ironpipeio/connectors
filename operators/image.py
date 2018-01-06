@@ -8,8 +8,6 @@ Created on Mon Nov  6 15:22:32 2017
 
 from PIL import Image
 import sys
-
-sys.path.append('../lib')
 import ironpipe.extension
 
 IMAGE_FILE_TYPES = {'JPEG', 'PNG', 'GIF'}

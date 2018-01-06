@@ -8,8 +8,6 @@ Created on Sun Nov 26 23:31:52 2017
 
 import gnupg
 import sys
-
-sys.path.append('../lib')
 import ironpipe.extension
 
 #

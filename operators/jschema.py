@@ -9,8 +9,6 @@ Created on Tue Nov 14 18:58:42 2017
 import sys
 import json
 from jsonschema import validate
-
-sys.path.append('../lib')
 import ironpipe.extension
 
 # JSON_Schema_Validator = Draft4Validator
