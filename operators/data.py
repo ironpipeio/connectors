@@ -33,7 +33,6 @@ import csv
 import json
 import xml.etree.ElementTree as ET
 
-sys.path.append('../../ironpipe-python')
 import ironpipe.extension
 
 # Data is stored as and OrderedDict to preserve the column sequence
