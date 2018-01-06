@@ -1,0 +1,5 @@
+resource: operator
+name: compress-csv-file
+action: https://ironpipe.io/lib/operators/operator-gzip.py
+config:
+  action: compress

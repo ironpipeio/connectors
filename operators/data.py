@@ -4,14 +4,16 @@
 Created on Sun Nov  5 12:56:01 2017
 @author: eckart
 
-Implements built-in 'data' transformer
+Implements built-in 'data' operator
 
-Resource: transformers
+Resource: operator
 
 Transformer resources receive data from a stream and write the
 data back into the stream. Transformers support the following properties:
 
-This type transforms a data file from one format into another format.
+This operator either validates or transforms a data file from one format
+into another format.
+
 Supports the following config arguments:
 
     input (string) One of csv, tsv, json, xml. Required.
@@ -32,7 +34,7 @@ import json
 import xml.etree.ElementTree as ET
 
 sys.path.append('../lib')
-import ironpipe
+import ironpipe.extension
 
 # Data is stored as and OrderedDict to preserve the column sequence
 
@@ -55,7 +57,7 @@ def read_json(file):
             for line in file:
                 data.append(json.loads(line))
         except Exception as err:
-            ironpipe.exit('Data read error: {}'.format(err))
+            ironpipe.extension.exit('Data read error: {}'.format(err))
 
     return data
 
@@ -70,24 +72,31 @@ def write_json(data, file):
             json.dump(row, file)
             file.write('\n')
 
-        ironpipe.set_metadata('content-type', 'application/json')
+        ironpipe.extension.set_metadata('content-type', 'application/json')
 
     except Exception as err:
-        ironpipe.exit('Data write error: {}'.format(err))
+        exit('Data write error: {}'.format(err))
+
 
 #
 #
 def isInt(v):
-    try:     i = int(v)
-    except:  return False
+    try:
+        i = int(v)
+    except:
+        return False
     return True
+
 
 #
 #
 def isFloat(v):
-    try:     i = float(v)
-    except:  return False
+    try:
+        i = float(v)
+    except:
+        return False
     return True
+
 
 #
 # convert int and float to native python formats
@@ -102,6 +111,7 @@ def convert_data(row):
 
     return row
 
+
 #
 #
 def read_csv(file, delimiter=','):
@@ -114,7 +124,7 @@ def read_csv(file, delimiter=','):
         has_header = csv.Sniffer().has_header(file.read(1024))
         file.seek(0)
     except Exception as err:
-        ironpipe.exit('Data read error: {}'.format(err))
+        ironpipe.extension.exit('Data read error: {}'.format(err))
 
     try:
         # read first line
@@ -142,9 +152,10 @@ def read_csv(file, delimiter=','):
                 data.append(data_row)
 
     except Exception as err:
-        ironpipe.exit('Data read error line {}: {}'.format(reader.line_num, err))
+        ironpipe.extension.exit('Data read error line {}: {}'.format(reader.line_num, err))
 
     return data
+
 
 #
 #
@@ -164,14 +175,15 @@ def write_csv(data, file, delimiter=','):
     writer = csv.DictWriter(file, fieldnames=header, delimiter=delimiter)
 
     try:
-        writer.writeheader() # Write header
+        writer.writeheader()  # Write header
         for row in data:  # Write all records
             writer.writerow(row)
 
-        ironpipe.set_metadata('content-type', 'text/csv')
+        ironpipe.extension.set_metadata('content-type', 'text/csv')
 
     except Exception as err:
-        ironpipe.exit('Data write error: ' + str(err))
+        ironpipe.extension.exit('Data write error: ' + str(err))
+
 
 #
 #
@@ -181,13 +193,14 @@ def read_tsv(file):
     '''
     return read_csv(file, delimiter='\t')
 
+
 #
 #
 def write_tsv(data, file, delimiter=','):
     '''
     '''
     write_csv(data, file, delimiter='\t')
-    ironpipe.set_metadata('content-type', 'text/tab-separated-values')
+    ironpipe.extension.set_metadata('content-type', 'text/tab-separated-values')
 
 
 #
@@ -200,7 +213,7 @@ def read_xml(file):
         tree = ET.parse(file)
         root = tree.getroot()
     except Exception as err:
-        ironpipe.exit('Data read error: {}'.format(err))
+        ironpipe.extension.exit('Data read error: {}'.format(err))
 
     data = []
 
@@ -216,6 +229,7 @@ def read_xml(file):
         data.append(rowDict)
 
     return data
+
 
 #
 # Writes flat XML file
@@ -233,7 +247,7 @@ def write_xml(data, file):
         print('</row>')
     print('</data>')
 
-    ironpipe.set_metadata('content-type', 'application/xml')
+    ironpipe.extension.set_metadata('content-type', 'application/xml')
 
 
 #
@@ -246,25 +260,25 @@ DATA_MAP_FUNCTIONS = {
     'xml':   {'read': read_xml,   'write': write_xml}
 }
 
+
 #
 #
 def transform_data():
     '''
     '''
-    input = ironpipe.get_config('input')
-    output = ironpipe.get_config('output')
-
-    # Confirm that both input and output are set
-    if not input or not output:
-        ironpipe.exit('Missing input or output configuration.')
-    else:
+    input = ironpipe.extension.get_config('input')
+    if input:
         input = input.lower()
-        output = output.lower()
-
-    # Confirm that both input and output are known data formats
-    if input not in DATA_MAP_FUNCTIONS or output not in DATA_MAP_FUNCTIONS:
+    if not input or input not in DATA_MAP_FUNCTIONS:
         types = ', '.join([i for i in DATA_MAP_FUNCTIONS])
-        ironpipe.exit('Data format must be one of: {}.'.format(types))
+        ironpipe.extension.exit("Required attribute 'input' must be one of: {}".format(types))
+
+    output = ironpipe.extension.get_config('output')
+    if output:
+        output = output.lower()
+    if not output or output not in DATA_MAP_FUNCTIONS:
+        types = ', '.join([i for i in DATA_MAP_FUNCTIONS])
+        ironpipe.extension.exit("Required attribute 'output' must be one of: {}".format(types))
 
     # Parse the input file
     data = DATA_MAP_FUNCTIONS[input]['read'](sys.stdin)
@@ -276,16 +290,18 @@ def transform_data():
             for line in sys.stdin:
                 sys.stdout.write(line)
         except Exception as err:
-            ironpipe.exit('Data write error: ' + str(err))
+            ironpipe.extension.exit('Data write error: ' + str(err))
     else:
         DATA_MAP_FUNCTIONS[output]['write'](data, sys.stdout)
 
     return 0
 
+
 #
 #
 def main():
     return transform_data()
+
 
 if __name__ == '__main__':
     main()

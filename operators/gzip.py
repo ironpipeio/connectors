@@ -10,7 +10,8 @@ import sys
 import gzip
 
 sys.path.append('../lib')
-import ironpipe
+import ironpipe.extension
+
 
 #
 #
@@ -20,13 +21,14 @@ def compress_file(input, output, compression):
     try:
         data = input.buffer.read()
     except Exception as err:
-        ironpipe.exit('Data read error: {}'.format(err))
+        ironpipe.extension.exit('Data read error: {}'.format(err))
 
     try:
         data = gzip.compress(data, compresslevel=compression)
         output.buffer.write(data)
     except Exception as err:
-        ironpipe.exit('Data write error: {}'.format(err))
+        ironpipe.extension.exit('Data write error: {}'.format(err))
+
 
 #
 #
@@ -37,12 +39,12 @@ def decompress_file(input, output, compression):
         with gzip.open(input.buffer) as file:
             data = file.read()
     except Exception as err:
-        ironpipe.exit('Data read error: {}'.format(err))
+        ironpipe.extension.exit('Data read error: {}'.format(err))
 
     try:
         output.buffer.write(data)
     except Exception as err:
-        ironpipe.exit('Data write error: {}'.format(err))
+        ironpipe.extension.exit('Data write error: {}'.format(err))
 
 
 #
@@ -53,19 +55,22 @@ ACTION_MAP_FUNCTIONS = {
     'decompress': decompress_file
 }
 
+
 #
 #
 def gzip_data():
     '''
     '''
-    action = ironpipe.get_config('action')
-    compressionlevel = ironpipe.get_config('compression')
+    action = ironpipe.extension.get_config('action')
+    compressionlevel = ironpipe.extension.get_config('compression')
 
-    # Confirm that both input and output are set
-    if not action:
-        ironpipe.exit('Need to specify action.')
-    else:
+    if action:
         action = action.lower()
+
+    # Confirm that action is specified and valid
+    if not action or action not in ACTION_MAP_FUNCTIONS:
+        actions = ', '.join([i for i in ACTION_MAP_FUNCTIONS])
+        ironpipe.extension.exit("Required attribute 'action' must be one of {}.".format(actions))
 
     if compressionlevel:
         # If it is not an int, try to convert
@@ -73,28 +78,25 @@ def gzip_data():
             try:
                 compressionlevel = int(compressionlevel)
             except ValueError:
-                ironpipe.exit('Compression level must be an integer.')
+                ironpipe.extension.exit("Attribute 'compression' level must be an integer.")
     else:
         compressionlevel = 9 # default compression level
 
     # Confirm that level is 0-9
     if not 0 <= compressionlevel <= 9:
-        ironpipe.exit('Compression level must be 0-9.')
-
-    # Confirm that action is known
-    if action not in ACTION_MAP_FUNCTIONS:
-        actions = ', '.join([i for i in ACTION_MAP_FUNCTIONS])
-        ironpipe.exit("Action must be one of {}.".format(actions))
+        ironpipe.extension.exit("Attribute 'compression' must be 0-9.")
 
     # Compress / uncompress data the input file
     ACTION_MAP_FUNCTIONS[action](sys.stdin, sys.stdout, compressionlevel)
 
     return 0
 
+
 #
 #
 def main():
     return gzip_data()
+
 
 if __name__ == '__main__':
     main()

@@ -11,9 +11,10 @@ import json
 from jsonschema import validate
 
 sys.path.append('../lib')
-import ironpipe
+import ironpipe.extension
 
 # JSON_Schema_Validator = Draft4Validator
+
 
 #
 # Read one or more JSON files from the input and check against schema
@@ -26,13 +27,13 @@ def check_file(input, output, schema):
     try:
         input_string = input.read()
     except Exception as err:
-        ironpipe.exit('Data read error: {}'.format(err))
+        ironpipe.extension.exit('Data read error: {}'.format(err))
 
     # Try parsing the string
     try:
         data = json.loads(input_string)
 
-        if not isinstance(data, list): # Need to always return a list
+        if not isinstance(data, list):  # Need to always return a list
             data = [data]
 
     except Exception as err:
@@ -44,21 +45,22 @@ def check_file(input, output, schema):
                 data.append(json.loads(line))
 
         except Exception as err:
-            ironpipe.exit('Data read error: {}'.format(err))
+            ironpipe.extension.exit('Data read error: {}'.format(err))
 
     try:
         for row in data:
             validate(row, schema)
 
     except Exception as err:
-        ironpipe.exit('Data failed JSON Schema validation: {}'.format(err))
+        ironpipe.extension.exit('Data failed JSON Schema validation: {}'.format(err))
 
     # Write the origninal, validated string to the output
     try:
         output.write(input_string)
 
     except Exception as err:
-        ironpipe.exit('Data write error: {}'.format(err))
+        ironpipe.extension.exit('Data write error: {}'.format(err))
+
 
 #
 #
@@ -68,11 +70,11 @@ def check_schema():
         check_file(f, sys.stdout,foo)
     '''
 
-    schema = ironpipe.get_config('schema')
+    schema = ironpipe.extension.get_config('schema')
 
     # argument is required
     if not schema:
-        ironpipe.exit('Missing schema configuration.')
+        ironpipe.extension.exit("Missing required attribute 'schema'.")
 
     # Fix escape characters so that JSON parser preserves '\' characters
     # for regex strings
@@ -83,16 +85,18 @@ def check_schema():
         schema = json.loads(schema)
 
     except Exception as err:
-        ironpipe.exit('Schema not valid JSON: {}'.format(err))
+        ironpipe.extension.exit("Required attribute 'schema' not valid JSON: {}".format(err))
 
     check_file(sys.stdin, sys.stdout, schema)
 
     return 0
 
+
 #
 #
 def main():
     return check_schema()
+
 
 if __name__ == '__main__':
     main()
