@@ -1,6 +1,0 @@
-type Customer {
-        id: ID!
-        created: Int!
-        description: String
-        email: String
-}
