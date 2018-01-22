@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun Nov 26 23:31:52 2017
-
-@author: eckart
 """
 
 import gnupg

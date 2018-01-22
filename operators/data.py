@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sun Nov  5 12:56:01 2017
-@author: eckart
-
 Implements built-in 'data' operator
 
 Resource: operator
