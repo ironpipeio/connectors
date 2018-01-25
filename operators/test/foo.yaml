@@ -1,24 +1,6 @@
-resource: stream
-name: demo1
-producer: demo1-sftp-server
-consumer: demo1-s3-bucket
-transformers:
-  - decrypt-csv-file
-  - convert-to-json
-  - verify-json-schema
-
-
-
-  resource: stream
-  name: demo1
-  producer:
-    resource: producer
-    name: demo1-sftp-server
-    action: sftp-server
-    config:
-      secret: demo1-sftp-credential
-  consumer: demo1-s3-bucket
-  transformers:
-    - decrypt-csv-file
-    - convert-to-json
-    - verify-json-schema
+name: demo-operator
+resource: operator
+type: https://ironpipe.io/lib/data.py
+config:
+  input: json
+  output: json
